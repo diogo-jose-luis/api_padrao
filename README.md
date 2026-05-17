@@ -1,59 +1,246 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# API Padrão
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API REST desenvolvida em **Laravel 12** com autenticação **Laravel Sanctum**, pensada como base reutilizável para projetos que precisam de gestão de utilizadores, cargos e departamentos. Inclui respostas JSON padronizadas, validação de dados, upload de fotografia de perfil e documentação interativa com **Swagger (OpenAPI 3.0)**.
 
-## About Laravel
+## Funcionalidades
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Autenticação com token Bearer (registo, login, logout e perfil autenticado)
+- CRUD completo de **utilizadores**, **cargos** e **departamentos**
+- Relacionamento de utilizadores com cargo e departamento
+- Upload de fotografia de perfil (armazenamento público)
+- Respostas JSON consistentes (`success`, `message`, `data`)
+- Tratamento centralizado de erros de validação, autenticação e recursos não encontrados
+- Documentação Swagger para testar endpoints no navegador
+- Seeders com dados iniciais para desenvolvimento
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tecnologias
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Tecnologia | Versão |
+|------------|--------|
+| PHP | ^8.2 |
+| Laravel | ^12.0 |
+| Laravel Sanctum | ^4.0 |
+| L5-Swagger (OpenAPI) | ^11.0 |
+| SQLite (padrão) / MySQL | — |
 
-## Learning Laravel
+## Requisitos
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- PHP >= 8.2
+- Composer
+- Extensões PHP: `openssl`, `pdo`, `mbstring`, `tokenizer`, `xml`, `ctype`, `json`, `fileinfo`
+- MySQL ou MariaDB (opcional; o projeto usa SQLite por defeito)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Instalação
 
-## Laravel Sponsors
+```bash
+# Clonar o repositório
+git clone https://github.com/SEU_USUARIO/api_padrao.git
+cd api_padrao
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Instalar dependências
+composer install
 
-### Premium Partners
+# Configurar ambiente
+cp .env.example .env
+php artisan key:generate
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# Base de dados (SQLite — ficheiro criado automaticamente)
+touch database/database.sqlite
+php artisan migrate
 
-## Contributing
+# Dados iniciais (opcional)
+php artisan db:seed
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Ligação simbólica para fotografias públicas
+php artisan storage:link
 
-## Code of Conduct
+# Documentação Swagger
+composer swagger
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### MySQL (opcional)
 
-## Security Vulnerabilities
+No ficheiro `.env`, ajuste as variáveis de base de dados:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=api_padrao
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## License
+Depois execute `php artisan migrate --seed`.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Servidor de desenvolvimento
+
+```bash
+php artisan serve
+```
+
+A API ficará disponível em `http://127.0.0.1:8000`.
+
+Confirme que `APP_URL` no `.env` corresponde ao URL em uso:
+
+```env
+APP_URL=http://127.0.0.1:8000
+```
+
+## Documentação Swagger
+
+Com o servidor a correr, aceda à documentação interativa:
+
+| Recurso | URL |
+|---------|-----|
+| Página inicial | `http://127.0.0.1:8000/` |
+| Swagger UI | `http://127.0.0.1:8000/api/documentation` |
+
+### Testar endpoints protegidos
+
+1. Execute `POST /api/login` (ou `/api/register`) no Swagger.
+2. Copie o valor de `data.token` da resposta.
+3. Clique em **Authorize** e insira: `Bearer {seu_token}`.
+4. Execute os endpoints protegidos normalmente.
+
+No dropdown **Servers**, prefira **"Servidor atual"** (`/api`) para que os pedidos usem o mesmo host e porta da documentação.
+
+Para regenerar a documentação após alterações:
+
+```bash
+composer swagger
+# ou
+php artisan l5-swagger:generate
+```
+
+## Endpoints
+
+Prefixo base: `/api`
+
+### Autenticação (público)
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `POST` | `/register` | Registar utilizador e obter token |
+| `POST` | `/login` | Login com email e password |
+
+### Autenticação (protegido — Bearer token)
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `POST` | `/logout` | Revogar o token atual |
+| `GET` | `/me` | Utilizador autenticado |
+
+### Utilizadores (protegido)
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `GET` | `/users` | Listar utilizadores |
+| `POST` | `/users` | Criar utilizador |
+| `GET` | `/users/{id}` | Detalhes do utilizador |
+| `PUT` | `/users/{id}` | Atualizar utilizador |
+| `DELETE` | `/users/{id}` | Remover utilizador |
+
+### Cargos (protegido)
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `GET` | `/positions` | Listar cargos |
+| `POST` | `/positions` | Criar cargo |
+| `GET` | `/positions/{id}` | Detalhes do cargo |
+| `PUT` | `/positions/{id}` | Atualizar cargo |
+| `DELETE` | `/positions/{id}` | Remover cargo |
+
+### Departamentos (protegido)
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `GET` | `/departments` | Listar departamentos |
+| `POST` | `/departments` | Criar departamento |
+| `GET` | `/departments/{id}` | Detalhes do departamento |
+| `PUT` | `/departments/{id}` | Atualizar departamento |
+| `DELETE` | `/departments/{id}` | Remover departamento |
+
+## Formato das respostas
+
+### Sucesso
+
+```json
+{
+  "success": true,
+  "message": "Login efetuado com sucesso.",
+  "data": {
+    "token": "1|xxxxxxxx",
+    "user": { }
+  }
+}
+```
+
+### Erro de validação (422)
+
+```json
+{
+  "success": false,
+  "message": "Dados de validação inválidos.",
+  "errors": {
+    "email": ["The email field is required."]
+  }
+}
+```
+
+### Não autenticado (401)
+
+```json
+{
+  "success": false,
+  "message": "Não autenticado."
+}
+```
+
+## Utilizador de teste (seeder)
+
+Após `php artisan db:seed`:
+
+| Campo | Valor |
+|-------|-------|
+| Email | `diogo.luis.job@hotmail.com` |
+| Password | `123456789` |
+
+## Estrutura do projeto
+
+```
+app/
+├── Http/
+│   ├── Controllers/     # Auth, User, Position, Department
+│   ├── Requests/        # Validação de formulários
+│   └── Resources/       # Transformação das respostas JSON
+├── Models/
+├── OpenApi/             # Schemas e metadados Swagger
+└── Traits/              # ApiResponse, HandlesUserPhoto
+routes/
+└── api.php              # Rotas da API
+database/
+├── migrations/
+└── seeders/
+```
+
+## Autenticação
+
+A API utiliza **Laravel Sanctum** com tokens pessoais. Envie o token no cabeçalho de cada pedido protegido:
+
+```
+Authorization: Bearer {token}
+Accept: application/json
+Content-Type: application/json
+```
+
+## Licença
+
+Este projeto está licenciado sob a [MIT License](https://opensource.org/licenses/MIT).
+
+## Autor
+
+**Diogo Luis**
+
+- Email: [diogo.luis.job@hotmail.com](mailto:diogo.luis.job@hotmail.com)
+- Telefone: +244 936 551 407
