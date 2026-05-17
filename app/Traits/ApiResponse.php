@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Traits;
+
+use Illuminate\Http\JsonResponse;
+
+trait ApiResponse
+{
+    /**
+     * Resposta JSON de sucesso padronizada.
+     */
+    protected function successResponse(string $message, mixed $data = null, int $status = 200): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'message' => $message,
+            'data' => $data,
+        ], $status);
+    }
+
+    /**
+     * Resposta JSON de erro padronizada.
+     */
+    protected function errorResponse(string $message, mixed $errors = null, int $status = 400): JsonResponse
+    {
+        $payload = [
+            'success' => false,
+            'message' => $message,
+        ];
+
+        if ($errors !== null) {
+            $payload['errors'] = $errors;
+        }
+
+        return response()->json($payload, $status);
+    }
+}
